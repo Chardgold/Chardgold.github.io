@@ -1,0 +1,39 @@
+.terminal-content {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  background: #1a1a1a;
+  border-radius: 0 0 8px 8px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.code-line {
+  margin: 8px 0;
+  min-height: 20px;
+}
+
+.terminal-cursor {
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Terminal glow effect */
+.terminal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff41, transparent);
+  animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
