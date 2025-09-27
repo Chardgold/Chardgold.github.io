@@ -9,10 +9,10 @@ const About = () => {
 
   const codeLines = [
     "const aboutMe = {",
-    "  name: 'chdgldcode',",
-    "  title: 'Frontend Developer',", 
-    "  location: 'Philippines',",
-    "  passion: 'Creating amazing web experiences'",
+    "  name: 'Richard Kalim Jr.',",
+    "  location: 'General Santos City'",
+    "  School: 'Mindanao State University - General Santos'",
+    "  'The world is full of good people. If you cannot find one be one'",
     "}"
   ];
 

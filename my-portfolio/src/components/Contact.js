@@ -106,9 +106,6 @@ Please contact me directly at: richard.kalim@msugensan.edu.ph`);
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h3>Get in touch</h3>
-            <p>I'm interested in freelance opportunities. However, if you have other request or question, don't hesitate to contact me.</p>
-            
             <div className="contact-details">
               <div className="contact-item">
                 <FaEnvelope />

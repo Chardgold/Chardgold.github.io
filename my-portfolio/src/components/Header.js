@@ -32,14 +32,14 @@ const Header = () => {
     >
       <div className="nav-container">
         <div className="nav-logo">
-          <span className="logo-text">✦ Portfolio</span>
+          <span className="logo-text"></span>
         </div>
         
         <nav className={`nav-menu ${isOpen ? 'active' : ''}`}>
-          <button onClick={() => scrollToSection('Home')}>HOME</button>
+          <button onClick={() => scrollToSection('home')}>HOME</button>
           <button onClick={() => scrollToSection('about')}>ABOUT</button>
           <button onClick={() => scrollToSection('projects')}>PROJECTS</button>
-          <button onClick={() => scrollToSection('skills')}>SKILLS</button>
+          <button onClick={() => scrollToSection('certificates')}>CERTIFICATES</button>
           <button onClick={() => scrollToSection('contact')}>CONTACT</button>
         </nav>
 

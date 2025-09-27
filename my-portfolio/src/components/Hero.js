@@ -60,12 +60,6 @@ const Hero = () => {
             seamless user experiences.
           </motion.p>
           
-          <motion.div variants={itemVariants} className="hero-buttons">
-            <button className="btn btn-primary">
-              About me →
-            </button>
-          </motion.div>
-          
           <motion.div variants={itemVariants} className="social-links">
             <a href="https://github.com/chdgldcode" target="_blank" rel="noopener noreferrer">
               <FaGithub />
