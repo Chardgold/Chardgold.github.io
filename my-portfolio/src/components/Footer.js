@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { FaGithub, FaFacebook, FaTiktok } from 'react-icons/fa';
 
 const Footer = () => {
   return (
@@ -7,12 +7,11 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-left">
-            <h3>✦ chdgldcode</h3>
-            <p>Building digital experiences</p>
+            <h3>@chdgldcode</h3>
           </div>
           
           <div className="footer-center">
-            <p>&copy; 2024 chdgldcode. All rights reserved.</p>
+            <p>&copy; 2025 chdgldcode. All rights reserved.</p>
           </div>
           
           <div className="footer-right">
@@ -20,11 +19,11 @@ const Footer = () => {
               <a href="https://github.com/chdgldcode" target="_blank" rel="noopener noreferrer">
                 <FaGithub />
               </a>
-              <a href="https://linkedin.com/in/chdgldcode" target="_blank" rel="noopener noreferrer">
-                <FaLinkedin />
+              <a href="https://www.facebook.com/itsmerichard15/" target="_blank" rel="noopener noreferrer">
+                <FaFacebook />
               </a>
-              <a href="https://twitter.com/chdgldcode" target="_blank" rel="noopener noreferrer">
-                <FaTwitter />
+              <a href="https://www.tiktok.com/@shaaaaaard?_t=ZS-906RbXY5HgA&_r=1" target="_blank" rel="noopener noreferrer">
+                <FaTiktok />
               </a>
             </div>
           </div>
