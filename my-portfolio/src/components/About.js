@@ -12,6 +12,8 @@ const About = () => {
     "  name: 'Richard Kalim Jr.',",
     "  location: 'General Santos City'",
     "  School: 'Mindanao State University - General Santos'",
+    "  Goal: 'To become Network Engineer'",
+    "  Interest: 'Learning new technologies', Networking Tech'",
     "  'The world is full of good people. If you cannot find one be one'",
     "}"
   ];

@@ -4,7 +4,7 @@ import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
 const Hero = () => {
   const [displayText, setDisplayText] = useState('');
-  const fullText = "Hi, I'm a web designer and front-end developer";
+  const fullText = "Welcome to my personal achievements and goals—get to know more about me";
 
   useEffect(() => {
     let index = 0;
@@ -55,9 +55,7 @@ const Hero = () => {
           </motion.h1>
           
           <motion.p variants={itemVariants} className="hero-description">
-            I'm someone who has always been invested in programming and creating visually appealing, 
-            functional interfaces for the web. I love working with modern technologies and creating 
-            seamless user experiences.
+           I am dedicated to exploring diverse opportunities that enhance my skills and actively engage in experiences that help me become the person I aspire to be.
           </motion.p>
           
           <motion.div variants={itemVariants} className="social-links">
