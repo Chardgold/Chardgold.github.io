@@ -40,7 +40,7 @@ const About = () => {
                     }
                   }
                 },
-                'educ-attainment.txt': {
+                'educational-attainment.txt': {
                   type: 'file',
                   content: `Elementary
 School: Baluan Elementary School
@@ -55,7 +55,17 @@ Graduated: 2020
 Senior High - Accountancy and Business Management (ABM)
 School: Baluan National High School
 Location: Baluan General Santos City
-Graduated: 2020`
+Graduated: 2020
+
+College
+School: Mindanao State University - General Santos
+Location: General Santos City
+Course: Network Engineering
+Status: Currently Studying`
+                },
+                'skills.txt': {
+                  type: 'file',
+                  content: 'JavaScript, React, Node.js, Networking, Linux, Network Security, Cisco Technologies'
                 }
               }
             }
@@ -85,6 +95,10 @@ Graduated: 2020`
         '  cat      - Display file contents',
         '  clear    - Clear terminal',
         '',
+        'Try these files:',
+        '  cat about.js',
+        '  cat educational-attainment.txt',
+        '  cat skills.txt'
       ]
     }),
 
@@ -254,7 +268,7 @@ Graduated: 2020`
         { type: 'output', content: ['Welcome to Richard\'s Portfolio Terminal!'] },
         { type: 'output', content: ['Type "help" to see available commands.'] },
         { type: 'output', content: ['Try "cat about.js" to learn more about me!'] },
-        { type: 'output', content: ['Try "cat educational-attainment.txt" to see my education!'] },
+        { type: 'output', content: ['Or check "cat educational-attainment.txt" for my education background.'] },
         { type: 'output', content: [''] }
       ]);
     }
@@ -347,7 +361,7 @@ Graduated: 2020`
                     marginLeft: '5px',
                     flex: 1
                   }}
-                  autoFocus
+                  autoFocus={isInView}
                 />
                 <motion.span
                   animate={{ opacity: [1, 0] }}
