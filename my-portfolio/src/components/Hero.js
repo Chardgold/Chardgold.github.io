@@ -3,22 +3,7 @@ import { motion } from 'framer-motion';
 import { FaGithub, FaFacebook, FaTiktok } from 'react-icons/fa';
 
 const Hero = () => {
-  const [displayText, setDisplayText] = useState('');
   const fullText = "Welcome to my personal achievements and goals—get to know more about me";
-
-  useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index < fullText.length) {
-        setDisplayText(fullText.slice(0, index + 1));
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 50);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -50,8 +35,7 @@ const Hero = () => {
           </motion.div>
           
           <motion.h1 variants={itemVariants} className="hero-title">
-            {displayText}
-            <span className="cursor">|</span>
+            {fullText}
           </motion.h1>
           
           <motion.p variants={itemVariants} className="hero-description">

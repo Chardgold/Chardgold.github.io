@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import '../styles/About.css';
 
 const About = () => {
   const [isInView, setIsInView] = useState(false);
   const [terminalHistory, setTerminalHistory] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
   const [currentDirectory, setCurrentDirectory] = useState('/home/richard');
-  const [isTyping, setIsTyping] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
@@ -42,30 +44,20 @@ const About = () => {
                 },
                 'educational-attainment.txt': {
                   type: 'file',
-                  content: `Elementary
+                  content: `Elementary School:
 School: Baluan Elementary School
 Location: Baluan General Santos City
 Graduated: 2016
 
-Highschool
+High School:
 School: Baluan National High School
 Location: Baluan General Santos City
 Graduated: 2020
 
-Senior High - Accountancy and Business Management (ABM)
+Senior High - Accountancy and Business Management (ABM):
 School: Baluan National High School
 Location: Baluan General Santos City
-Graduated: 2020
-
-College
-School: Mindanao State University - General Santos
-Location: General Santos City
-Course: Network Engineering
-Status: Currently Studying`
-                },
-                'skills.txt': {
-                  type: 'file',
-                  content: 'JavaScript, React, Node.js, Networking, Linux, Network Security, Cisco Technologies'
+Graduated: 2020`
                 }
               }
             }
@@ -95,10 +87,10 @@ Status: Currently Studying`
         '  cat      - Display file contents',
         '  clear    - Clear terminal',
         '',
-        'Try these files:',
-        '  cat about.js',
-        '  cat educational-attainment.txt',
-        '  cat skills.txt'
+        'Navigation tips:',
+        '  cd ..    - Go to parent directory',
+        '  cd ~     - Go to home directory',
+        '  ls -la   - List with details'
       ]
     }),
 
@@ -250,9 +242,23 @@ Status: Currently Studying`
   };
 
   const handleTerminalClick = () => {
-    if (inputRef.current) {
-      inputRef.current.focus();
+    // Show welcome message on first click
+    if (!showWelcome) {
+      setShowWelcome(true);
+      setTerminalHistory([
+        { type: 'output', content: ['Welcome to Richard\'s Portfolio Terminal!'] },
+        { type: 'output', content: ['Type "help" to see available commands.'] },
+        { type: 'output', content: ['Try "cat about.js" to learn more about me!'] },
+        { type: 'output', content: [''] }
+      ]);
     }
+    
+    // Focus input immediately
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0);
   };
 
   useEffect(() => {
@@ -261,21 +267,15 @@ Status: Currently Studying`
     }
   }, [terminalHistory]);
 
+  // Initialize terminal when component comes into view
   useEffect(() => {
-    if (isInView) {
-      // Initial welcome message
-      setTerminalHistory([
-        { type: 'output', content: ['Welcome to Richard\'s Portfolio Terminal!'] },
-        { type: 'output', content: ['Type "help" to see available commands.'] },
-        { type: 'output', content: ['Try "cat about.js" to learn more about me!'] },
-        { type: 'output', content: ['Or check "cat educational-attainment.txt" for my education background.'] },
-        { type: 'output', content: [''] }
-      ]);
+    if (isInView && !isInitialized) {
+      setIsInitialized(true);
     }
-  }, [isInView]);
+  }, [isInView, isInitialized]);
 
   return (
-    <section id="about" className="about" style={{ padding: '80px 20px' }}>
+    <section id="about" className="about">
       <div className="container">
         <motion.div 
           className="about-content"
@@ -288,18 +288,9 @@ Status: Currently Studying`
               onComplete: () => setIsInView(true)
             }
           }}
-          onViewportLeave={() => setIsInView(false)}
-          viewport={{ once: false }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '60px',
-            justifyContent: 'space-between',
-            maxWidth: '1200px',
-            margin: '0 auto'
-          }}
+          viewport={{ once: true, amount: 0.3 }}
         >
-          <div className="about-text" style={{ flex: 1 }}>
+          <div className="about-text">
             <div className="terminal-header">
               <div className="terminal-controls">
                 <span className="control red"></span>
@@ -313,84 +304,59 @@ Status: Currently Studying`
               className="terminal-content"
               ref={terminalRef}
               onClick={handleTerminalClick}
-              style={{
-                height: '400px',
-                overflowY: 'auto',
-                padding: '15px',
-                backgroundColor: '#000',
-                color: '#00ff00',
-                fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                fontSize: '14px',
-                lineHeight: '1.4',
-                cursor: 'text'
-              }}
             >
-              {/* Terminal History */}
-              {terminalHistory.map((entry, index) => (
-                <div key={index} style={{ marginBottom: '5px' }}>
-                  {entry.type === 'input' ? (
-                    <div style={{ color: '#ffffff' }}>{entry.content}</div>
-                  ) : (
-                    entry.content.map((line, lineIndex) => (
-                      <div key={lineIndex} style={{ color: '#00ff00' }}>
-                        {line}
-                      </div>
-                    ))
-                  )}
+              {!showWelcome ? (
+                <div className="terminal-placeholder">
+                  <div className="output-line">Click to start terminal...</div>
                 </div>
-              ))}
-              
-              {/* Current Input Line */}
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ color: '#ffffff' }}>
-                  richard@portfolio:{currentDirectory}$ 
-                </span>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={currentInput}
-                  onChange={(e) => setCurrentInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    outline: 'none',
-                    color: '#00ff00',
-                    fontFamily: 'inherit',
-                    fontSize: 'inherit',
-                    marginLeft: '5px',
-                    flex: 1
-                  }}
-                  autoFocus={isInView}
-                />
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ 
-                    duration: 0.5,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                  style={{
-                    display: "inline-block",
-                    width: "8px",
-                    height: "16px",
-                    backgroundColor: "#00ff00",
-                    marginLeft: "2px"
-                  }}
-                />
-              </div>
+              ) : (
+                <>
+                  {/* Terminal History */}
+                  {terminalHistory.map((entry, index) => (
+                    <div key={index} className="terminal-line">
+                      {entry.type === 'input' ? (
+                        <div className="input-line">{entry.content}</div>
+                      ) : (
+                        entry.content.map((line, lineIndex) => (
+                          <div key={lineIndex} className="output-line">
+                            {line}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ))}
+                  
+                  {/* Current Input Line */}
+                  <div className="current-input-line">
+                    <span className="prompt">
+                      richard@portfolio:{currentDirectory}$ 
+                    </span>
+                    <span className="input-display">{currentInput}</span>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={currentInput}
+                      onChange={(e) => setCurrentInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      className="terminal-input"
+                    />
+                    <motion.span
+                      animate={{ opacity: [1, 0] }}
+                      transition={{ 
+                        duration: 0.5,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }}
+                      className="cursor"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
           
           {/* Hacker Image */}
-          <div 
-            className="hacker-image"
-            style={{ 
-              flex: '0 0 auto',
-              display: 'flex',
-              alignItems: 'center'
-            }}
-          >
+          <div className="hacker-image">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -399,11 +365,7 @@ Status: Currently Studying`
               <img 
                 src="/images/images-removebg-preview.png"
                 alt="Hacker"
-                style={{
-                  width: '250px',
-                  height: '250px',
-                  objectFit: 'contain'
-                }}
+                className="hacker-img"
               />
             </motion.div>
           </div>
@@ -415,69 +377,6 @@ Status: Currently Studying`
           </div>
         </motion.div>
       </div>
-
-      <style jsx>{`
-        .terminal-header {
-          background: #2d2d2d;
-          padding: 10px 15px;
-          border-radius: 8px 8px 0 0;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .terminal-controls {
-          display: flex;
-          gap: 8px;
-        }
-
-        .control {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-        }
-
-        .control.red {
-          background-color: #ff5f57;
-        }
-
-        .control.yellow {
-          background-color: #ffbd2e;
-        }
-
-        .control.green {
-          background-color: #28ca42;
-        }
-
-        .terminal-title {
-          color: #ffffff;
-          font-family: Monaco, Consolas, "Courier New", monospace;
-          font-size: 14px;
-        }
-
-        .terminal-content {
-          border: 1px solid #333;
-          border-radius: 0 0 8px 8px;
-          border-top: none;
-        }
-
-        .terminal-content::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        .terminal-content::-webkit-scrollbar-track {
-          background: #1a1a1a;
-        }
-
-        .terminal-content::-webkit-scrollbar-thumb {
-          background: #555;
-          border-radius: 4px;
-        }
-
-        .terminal-content::-webkit-scrollbar-thumb:hover {
-          background: #777;
-        }
-      `}</style>
     </section>
   );
 };
