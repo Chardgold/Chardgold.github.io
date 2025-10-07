@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -10,28 +10,30 @@ import Footer from './components/Footer';
 import DataTables from './pages/Datatables';
 import './styles/App.css';
 
+function LayoutWithHeaderFooter() {
+  return (
+    <>
+      <Header />
+      <Hero />
+      <About />
+      <Projects />
+      <Skills />
+      <Contact />
+      <Footer />
+    </>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Header />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Hero />
-                <About />
-                <Projects />
-                <Skills />
-                <Contact />
-              </>
-            }
-          />
-          <Route path="/datatables" element={<DataTables />} />
-        </Routes>
-        <Footer />
-      </div>
+      <Routes>
+        {/* Main site layout with header and footer */}
+        <Route path="/" element={<LayoutWithHeaderFooter />} />
+
+        {/* Datatables route — no header/footer */}
+        <Route path="/datatables" element={<DataTables />} />
+      </Routes>
     </Router>
   );
 }
