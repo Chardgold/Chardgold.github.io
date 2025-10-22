@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Company Employee Database</title>
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css" />
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #tab1 {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #000000;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Controls Container - Top Layout */
+        .controls-top-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .control-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Dropdown Styling */
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+            border: 1px solid #0056b3;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 86, 179, 0.2);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #003d82;
+            border-color: #003d82;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+        }
+
+        .dropdown-btn::after {
+            content: "▼";
+            font-size: 10px;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 12px 16px;
+            z-index: 1000;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            display: none;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-content label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: #000000;
+            transition: all 0.2s ease;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dropdown-content label:hover {
+            background-color: #f0f0f0;
+            padding: 8px 4px;
+            border-radius: 3px;
+        }
+
+        .dropdown-content input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            accent-color: #0056b3;
+        }
+
+        /* Search Input */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .search-container label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #000000;
+            white-space: nowrap;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .search-container input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 280px;
+            background-color: white;
+            color: #000000;
+            transition: all 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .search-container input::placeholder {
+            color: #999;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.2);
+        }
+
+        /* Delete Button */
+        #deleteBtn1 {
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: 1px solid #dc3545;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #deleteBtn1:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Table Styling */
+        table.display {
+            width: 100%;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            background-color: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        table.display tbody tr.selected {
+            background-color: #d4edff !important;
+        }
+
+        table.display tbody tr:hover {
+            background-color: #f9f9f9;
+            transition: all 0.2s ease;
+        }
+
+        table.display tbody td:first-child {
+            text-align: center;
+            width: 40px;
+        }
+
+        table.display thead th {
+            padding: 16px 18px;
+            text-align: left;
+            font-weight: 700;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+            color: #000000;
+            letter-spacing: 0.3px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        table.display tbody td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #dee2e6;
+            color: #000000;
+            word-break: break-word;
+            min-width: 100px;
+            font-weight: 400;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Specific column widths for better spacing */
+        table.display tbody td:nth-child(1),
+        table.display thead th:nth-child(1) {
+            width: 50px;
+            padding: 16px 10px;
+        }
+
+        table.display tbody td:nth-child(2),
+        table.display thead th:nth-child(2) {
+            width: 12%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(3),
+        table.display thead th:nth-child(3) {
+            width: 12%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(4),
+        table.display thead th:nth-child(4) {
+            width: 12%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(5),
+        table.display thead th:nth-child(5) {
+            width: 16%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(6),
+        table.display thead th:nth-child(6) {
+            width: 18%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(7),
+        table.display thead th:nth-child(7) {
+            width: 14%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(8),
+        table.display thead th:nth-child(8) {
+            width: 11%;
+            padding: 16px 18px;
+        }
+
+        table.display tbody td:nth-child(9),
+        table.display thead th:nth-child(9) {
+            width: 11%;
+            padding: 16px 18px;
+        }
+
+        /* Message styling */
+        .message {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+            font-weight: 500;
+            border-left: 4px solid;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+
+        /* DataTables Wrapper - COMPLETELY HIDE DEFAULT */
+        .dataTables_wrapper {
+            margin-top: 0 !important;
+        }
+
+        .dataTables_length,
+        .dataTables_filter,
+        .dataTables_info,
+        .dataTables_paginate,
+        .dataTables_processing {
+            display: none !important;
+        }
+
+        /* CUSTOM PAGINATION LAYOUT - CENTER ALIGNED */
+        .dt-custom-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-top: 20px;
+            padding: 20px 0;
+            border-top: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .dt-bottom-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: center;
+            padding: 12px 16px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            flex-wrap: wrap;
+            border: 1px solid #ddd;
+            order: 1;
+        }
+
+        .dt-entries-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dt-entries-section select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: white;
+            color: #000000;
+            min-width: 70px;
+            transition: all 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dt-entries-section select:hover {
+            border-color: #0056b3;
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.1);
+        }
+
+        .dt-entries-section select:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.2);
+        }
+
+        .dt-entries-label {
+            font-size: 14px;
+            color: #000000;
+            font-weight: 600;
+            white-space: nowrap;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dt-info-section {
+            font-size: 14px;
+            color: #000000;
+            white-space: nowrap;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dt-pages-section {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            align-items: center;
+            order: 2;
+        }
+
+        .dt-pages-section button {
+            padding: 6px 12px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #000000;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dt-pages-section button.active {
+            background-color: #0056b3;
+            color: white;
+            border-color: #0056b3;
+            box-shadow: 0 2px 6px rgba(0, 86, 179, 0.2);
+        }
+
+        .dt-pages-section button:hover:not(.disabled) {
+            background-color: #e9ecef;
+            border-color: #0056b3;
+            color: #0056b3;
+        }
+
+        .dt-pages-section button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .dt-pages-section span {
+            margin: 0 2px;
+            color: #999;
+        }
+
+        .dt-delete-section {
+            display: flex;
+            justify-content: center;
+            order: 3;
+        }
+
+        /* Label styling */
+        .control-label {
+            font-weight: 700;
+            font-size: 13px;
+            color: #000000;
+            margin-bottom: 5px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0056b3;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #003d82;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tech Company Employee Database</h1>
+
+    <!-- Main Table -->
+    <div id="tab1" class="tab-content active">
+        <div class="message" id="message1"></div>
+
+        <!-- Top Controls -->
+        <div class="controls-top-container">
+            <!-- Left Side - Show/Hide Columns Dropdown -->
+            <div class="control-left">
+                <label class="control-label">Show/Hide Columns</label>
+                <div class="dropdown-container">
+                    <button class="dropdown-btn" id="dropdownBtn1">Column Options</button>
+                    <div class="dropdown-content" id="dropdownContent1">
+                        <label><input type="checkbox" class="toggle-vis" data-column="1" checked> Employee ID</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="2" checked> Name</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="3" checked> Department</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="4" checked> Position</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="5" checked> Email</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="6" checked> Phone</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="7" checked> Hire Date</label>
+                        <label><input type="checkbox" class="toggle-vis" data-column="8" checked> Salary</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Search Input -->
+            <div class="search-container">
+                <label>Search:</label>
+                <input type="text" id="globalSearch" placeholder="">
+            </div>
+        </div>
+
+        <!-- Table -->
+        <table id="table1" class="display">
+            <thead>
+                <tr>
+                    <th style="width: 40px;"><input type="checkbox" id="selectAll1" title="Select all rows"></th>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Position</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Hire Date</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <!-- Custom Bottom Layout: CENTERED -->
+        <div class="dt-custom-bottom">
+            <!-- LEFT: Show entries and info -->
+            <div class="dt-bottom-left">
+                <div class="dt-entries-section">
+                    <label class="dt-entries-label">Show</label>
+                    <select id="pageLength">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <label class="dt-entries-label">entries</label>
+                </div>
+                <div class="dt-info-section" id="tableInfo">Showing 1 to 10 of 100 entries</div>
+            </div>
+
+            <!-- CENTER: Page Numbers and Pagination -->
+            <div class="dt-pages-section" id="paginationButtons"></div>
+
+            <!-- RIGHT: Delete Button -->
+            <div class="dt-delete-section">
+                <button id="deleteBtn1">Delete Selected Row(s)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tech Company Employee Data
+        const tableData = [
+            {empId: "EMP001", name: "Sarah Johnson", dept: "Engineering", position: "Senior Software Engineer", email: "sarah.johnson@techcorp.com", phone: "(555) 123-4567", hireDate: "2018-03-15", salary: "$145,000"},
+            {empId: "EMP002", name: "Michael Chen", dept: "Engineering", position: "Software Engineer", email: "michael.chen@techcorp.com", phone: "(555) 123-4568", hireDate: "2019-06-20", salary: "$125,000"},
+            {empId: "EMP003", name: "Emily Rodriguez", dept: "Product", position: "Product Manager", email: "emily.rodriguez@techcorp.com", phone: "(555) 123-4569", hireDate: "2017-01-10", salary: "$135,000"},
+            {empId: "EMP004", name: "James Wilson", dept: "Engineering", position: "DevOps Engineer", email: "james.wilson@techcorp.com", phone: "(555) 123-4570", hireDate: "2019-09-05", salary: "$130,000"},
+            {empId: "EMP005", name: "Lisa Anderson", dept: "Design", position: "UX/UI Designer", email: "lisa.anderson@techcorp.com", phone: "(555) 123-4571", hireDate: "2020-02-18", salary: "$115,000"},
+            {empId: "EMP006", name: "David Martinez", dept: "Engineering", position: "Backend Developer", email: "david.martinez@techcorp.com", phone: "(555) 123-4572", hireDate: "2019-04-22", salary: "$128,000"},
+            {empId: "EMP007", name: "Jessica Lee", dept: "Marketing", position: "Marketing Manager", email: "jessica.lee@techcorp.com", phone: "(555) 123-4573", hireDate: "2018-07-30", salary: "$120,000"},
+            {empId: "EMP008", name: "Robert Taylor", dept: "Engineering", position: "Frontend Developer", email: "robert.taylor@techcorp.com", phone: "(555) 123-4574", hireDate: "2020-05-11", salary: "$118,000"},
+            {empId: "EMP009", name: "Amanda Brown", dept: "HR", position: "HR Manager", email: "amanda.brown@techcorp.com", phone: "(555) 123-4575", hireDate: "2017-11-08", salary: "$110,000"},
+            {empId: "EMP010", name: "Christopher Davis", dept: "Engineering", position: "QA Engineer", email: "christopher.davis@techcorp.com", phone: "(555) 123-4576", hireDate: "2020-08-14", salary: "$105,000"},
+            {empId: "EMP011", name: "Michelle Garcia", dept: "Product", position: "Product Designer", email: "michelle.garcia@techcorp.com", phone: "(555) 123-4577", hireDate: "2019-12-02", salary: "$112,000"},
+            {empId: "EMP012", name: "Daniel Lopez", dept: "Engineering", position: "Senior DevOps Engineer", email: "daniel.lopez@techcorp.com", phone: "(555) 123-4578", hireDate: "2017-05-16", salary: "$150,000"},
+            {empId: "EMP013", name: "Jennifer White", dept: "Finance", position: "Finance Analyst", email: "jennifer.white@techcorp.com", phone: "(555) 123-4579", hireDate: "2018-09-24", salary: "$95,000"},
+            {empId: "EMP014", name: "Kevin Harris", dept: "Engineering", position: "Full Stack Developer", email: "kevin.harris@techcorp.com", phone: "(555) 123-4580", hireDate: "2020-01-27", salary: "$120,000"},
+            {empId: "EMP015", name: "Rachel Thomas", dept: "Design", position: "UI Designer", email: "rachel.thomas@techcorp.com", phone: "(555) 123-4581", hireDate: "2020-03-09", salary: "$110,000"},
+            {empId: "EMP016", name: "Mark Williams", dept: "Engineering", position: "Platform Engineer", email: "mark.williams@techcorp.com", phone: "(555) 123-4582", hireDate: "2018-10-11", salary: "$135,000"},
+            {empId: "EMP017", name: "Sofia Hernandez", dept: "Marketing", position: "Content Strategist", email: "sofia.hernandez@techcorp.com", phone: "(555) 123-4583", hireDate: "2021-01-19", salary: "$95,000"},
+            {empId: "EMP018", name: "Benjamin Moore", dept: "Engineering", position: "ML Engineer", email: "benjamin.moore@techcorp.com", phone: "(555) 123-4584", hireDate: "2019-02-14", salary: "$148,000"},
+            {empId: "EMP019", name: "Victoria Clark", dept: "Product", position: "Associate PM", email: "victoria.clark@techcorp.com", phone: "(555) 123-4585", hireDate: "2020-06-08", salary: "$100,000"},
+            {empId: "EMP020", name: "Andrew Lewis", dept: "Engineering", position: "Security Engineer", email: "andrew.lewis@techcorp.com", phone: "(555) 123-4586", hireDate: "2017-08-21", salary: "$140,000"},
+            {empId: "EMP021", name: "Samantha Jackson", dept: "HR", position: "Recruiter", email: "samantha.jackson@techcorp.com", phone: "(555) 123-4587", hireDate: "2019-03-25", salary: "$85,000"},
+            {empId: "EMP022", name: "Nicholas Young", dept: "Engineering", position: "Database Administrator", email: "nicholas.young@techcorp.com", phone: "(555) 123-4588", hireDate: "2018-04-17", salary: "$125,000"},
+            {empId: "EMP023", name: "Katherine King", dept: "Design", position: "Design Lead", email: "katherine.king@techcorp.com", phone: "(555) 123-4589", hireDate: "2017-09-12", salary: "$130,000"},
+            {empId: "EMP024", name: "Joshua Wright", dept: "Engineering", position: "Software Engineer", email: "joshua.wright@techcorp.com", phone: "(555) 123-4590", hireDate: "2020-11-03", salary: "$120,000"},
+            {empId: "EMP025", name: "Laura Scott", dept: "Finance", position: "CFO", email: "laura.scott@techcorp.com", phone: "(555) 123-4591", hireDate: "2016-05-11", salary: "$220,000"},
+            {empId: "EMP026", name: "Ryan Green", dept: "Engineering", position: "Infrastructure Engineer", email: "ryan.green@techcorp.com", phone: "(555) 123-4592", hireDate: "2019-07-15", salary: "$132,000"},
+            {empId: "EMP027", name: "Olivia Adams", dept: "Marketing", position: "Social Media Manager", email: "olivia.adams@techcorp.com", phone: "(555) 123-4593", hireDate: "2021-02-22", salary: "$82,000"},
+            {empId: "EMP028", name: "Tyler Nelson", dept: "Engineering", position: "Data Engineer", email: "tyler.nelson@techcorp.com", phone: "(555) 123-4594", hireDate: "2020-04-06", salary: "$135,000"},
+            {empId: "EMP029", name: "Sophia Carter", dept: "Product", position: "Data Analyst", email: "sophia.carter@techcorp.com", phone: "(555) 123-4595", hireDate: "2019-11-18", salary: "$105,000"},
+            {empId: "EMP030", name: "Jacob Mitchell", dept: "Engineering", position: "Mobile Developer", email: "jacob.mitchell@techcorp.com", phone: "(555) 123-4596", hireDate: "2020-09-07", salary: "$122,000"},
+            {empId: "EMP031", name: "Mia Perez", dept: "Design", position: "Brand Designer", email: "mia.perez@techcorp.com", phone: "(555) 123-4597", hireDate: "2021-03-15", salary: "$105,000"},
+            {empId: "EMP032", name: "Ethan Roberts", dept: "Engineering", position: "Tech Lead", email: "ethan.roberts@techcorp.com", phone: "(555) 123-4598", hireDate: "2016-01-25", salary: "$160,000"},
+            {empId: "EMP033", name: "Ava Phillips", dept: "Marketing", position: "Marketing Coordinator", email: "ava.phillips@techcorp.com", phone: "(555) 123-4599", hireDate: "2021-06-14", salary: "$75,000"},
+            {empId: "EMP034", name: "Mason Campbell", dept: "Engineering", position: "Systems Architect", email: "mason.campbell@techcorp.com", phone: "(555) 123-4600", hireDate: "2017-02-20", salary: "$155,000"},
+            {empId: "EMP035", name: "Isabella Parker", dept: "HR", position: "HR Specialist", email: "isabella.parker@techcorp.com", phone: "(555) 123-4601", hireDate: "2020-08-10", salary: "$80,000"},
+            {empId: "EMP036", name: "Lucas Evans", dept: "Engineering", position: "API Developer", email: "lucas.evans@techcorp.com", phone: "(555) 123-4602", hireDate: "2019-05-13", salary: "$123,000"},
+            {empId: "EMP037", name: "Emma Edwards", dept: "Product", position: "Product Analyst", email: "emma.edwards@techcorp.com", phone: "(555) 123-4603", hireDate: "2020-02-24", salary: "$98,000"},
+            {empId: "EMP038", name: "Alexander Collins", dept: "Engineering", position: "Senior Backend Engineer", email: "alexander.collins@techcorp.com", phone: "(555) 123-4604", hireDate: "2017-03-08", salary: "$148,000"},
+            {empId: "EMP039", name: "Charlotte Stewart", dept: "Design", position: "Interaction Designer", email: "charlotte.stewart@techcorp.com", phone: "(555) 123-4605", hireDate: "2020-07-20", salary: "$108,000"},
+            {empId: "EMP040", name: "Henry Sanchez", dept: "Engineering", position: "Cloud Engineer", email: "henry.sanchez@techcorp.com", phone: "(555) 123-4606", hireDate: "2019-10-04", salary: "$138,000"},
+            {empId: "EMP041", name: "Amelia Morris", dept: "Finance", position: "Accountant", email: "amelia.morris@techcorp.com", phone: "(555) 123-4607", hireDate: "2019-04-09", salary: "$88,000"},
+            {empId: "EMP042", name: "Benjamin Rogers", dept: "Engineering", position: "Java Developer", email: "benjamin.rogers@techcorp.com", phone: "(555) 123-4608", hireDate: "2020-12-01", salary: "$119,000"},
+            {empId: "EMP043", name: "Harper Reed", dept: "Marketing", position: "Growth Marketing Manager", email: "harper.reed@techcorp.com", phone: "(555) 123-4609", hireDate: "2018-08-27", salary: "$118,000"},
+            {empId: "EMP044", name: "Michael Bell", dept: "Engineering", position: "Python Developer", email: "michael.bell@techcorp.com", phone: "(555) 123-4610", hireDate: "2020-03-16", salary: "$121,000"},
+            {empId: "EMP045", name: "Evelyn Brown", dept: "Design", position: "UX Researcher", email: "evelyn.brown@techcorp.com", phone: "(555) 123-4611", hireDate: "2021-01-25", salary: "$112,000"},
+            {empId: "EMP046", name: "Daniel Cook", dept: "Engineering", position: "Site Reliability Engineer", email: "daniel.cook@techcorp.com", phone: "(555) 123-4612", hireDate: "2018-06-11", salary: "$140,000"},
+            {empId: "EMP047", name: "Abigail Morgan", dept: "Product", position: "Senior PM", email: "abigail.morgan@techcorp.com", phone: "(555) 123-4613", hireDate: "2016-11-14", salary: "$155,000"},
+            {empId: "EMP048", name: "Lucas Peterson", dept: "Engineering", position: "C++ Developer", email: "lucas.peterson@techcorp.com", phone: "(555) 123-4614", hireDate: "2019-01-22", salary: "$126,000"},
+            {empId: "EMP049", name: "Scarlett Powell", dept: "Marketing", position: "PR Specialist", email: "scarlett.powell@techcorp.com", phone: "(555) 123-4615", hireDate: "2020-09-21", salary: "$92,000"},
+            {empId: "EMP050", name: "Oliver Long", dept: "Engineering", position: "JavaScript Developer", email: "oliver.long@techcorp.com", phone: "(555) 123-4616", hireDate: "2021-04-12", salary: "$115,000"},
+            {empId: "EMP051", name: "Grace Patterson", dept: "HR", position: "People Operations", email: "grace.patterson@techcorp.com", phone: "(555) 123-4617", hireDate: "2019-02-04", salary: "$87,000"},
+            {empId: "EMP052", name: "Jackson Hughes", dept: "Engineering", position: "Go Developer", email: "jackson.hughes@techcorp.com", phone: "(555) 123-4618", hireDate: "2020-05-18", salary: "$124,000"},
+            {empId: "EMP053", name: "Lily Flores", dept: "Design", position: "Visual Designer", email: "lily.flores@techcorp.com", phone: "(555) 123-4619", hireDate: "2020-10-05", salary: "$107,000"},
+            {empId: "EMP054", name: "Liam Washington", dept: "Engineering", position: "Rust Developer", email: "liam.washington@techcorp.com", phone: "(555) 123-4620", hireDate: "2020-02-10", salary: "$128,000"},
+            {empId: "EMP055", name: "Zoe Butler", dept: "Finance", position: "Senior Accountant", email: "zoe.butler@techcorp.com", phone: "(555) 123-4621", hireDate: "2017-07-03", salary: "$105,000"},
+            {empId: "EMP056", name: "Benjamin Simmons", dept: "Engineering", position: "Scala Developer", email: "benjamin.simmons@techcorp.com", phone: "(555) 123-4622", hireDate: "2019-08-26", salary: "$127,000"},
+            {empId: "EMP057", name: "Violet Foster", dept: "Marketing", position: "Brand Manager", email: "violet.foster@techcorp.com", phone: "(555) 123-4623", hireDate: "2018-12-10", salary: "$115,000"},
+            {empId: "EMP058", name: "Alexander Bryant", dept: "Engineering", position: "Kotlin Developer", email: "alexander.bryant@techcorp.com", phone: "(555) 123-4624", hireDate: "2020-06-29", salary: "$119,000"},
+            {empId: "EMP059", name: "Hazel Alexander", dept: "Product", position: "UX PM", email: "hazel.alexander@techcorp.com", phone: "(555) 123-4625", hireDate: "2019-09-16", salary: "$125,000"},
+            {empId: "EMP060", name: "Elijah Russell", dept: "Engineering", position: "TypeScript Developer", email: "elijah.russell@techcorp.com", phone: "(555) 123-4626", hireDate: "2021-05-24", salary: "$118,000"},
+            {empId: "EMP061", name: "Maya Griffin", dept: "Design", position: "Senior UX Designer", email: "maya.griffin@techcorp.com", phone: "(555) 123-4627", hireDate: "2016-10-17", salary: "$138,000"},
+            {empId: "EMP062", name: "Logan Hayes", dept: "Engineering", position: "PHP Developer", email: "logan.hayes@techcorp.com", phone: "(555) 123-4628", hireDate: "2020-01-13", salary: "$113,000"},
+            {empId: "EMP063", name: "Nora Myers", dept: "Marketing", position: "Marketing Analyst", email: "nora.myers@techcorp.com", phone: "(555) 123-4629", hireDate: "2021-07-06", salary: "$88,000"},
+            {empId: "EMP064", name: "Mason Ford", dept: "Engineering", position: "Ruby Developer", email: "mason.ford@techcorp.com", phone: "(555) 123-4630", hireDate: "2019-11-11", salary: "$122,000"},
+            {empId: "EMP065", name: "Lucy Hamilton", dept: "HR", position: "Training Specialist", email: "lucy.hamilton@techcorp.com", phone: "(555) 123-4631", hireDate: "2020-04-27", salary: "$79,000"},
+            {empId: "EMP066", name: "Ethan Graham", dept: "Engineering", position: "Swift Developer", email: "ethan.graham@techcorp.com", phone: "(555) 123-4632", hireDate: "2020-08-03", salary: "$121,000"},
+            {empId: "EMP067", name: "Chloe Sullivan", dept: "Product", position: "Product Strategist", email: "chloe.sullivan@techcorp.com", phone: "(555) 123-4633", hireDate: "2017-12-04", salary: "$140,000"},
+            {empId: "EMP068", name: "Jacob Wallace", dept: "Engineering", position: "Vue Developer", email: "jacob.wallace@techcorp.com", phone: "(555) 123-4634", hireDate: "2020-10-12", salary: "$117,000"},
+            {empId: "EMP069", name: "Stella Woods", dept: "Design", position: "Design System Specialist", email: "stella.woods@techcorp.com", phone: "(555) 123-4635", hireDate: "2019-03-18", salary: "$125,000"},
+            {empId: "EMP070", name: "Lucas Ross", dept: "Engineering", position: "React Developer", email: "lucas.ross@techcorp.com", phone: "(555) 123-4636", hireDate: "2020-09-14", salary: "$120,000"},
+            {empId: "EMP071", name: "Aurora Henderson", dept: "Finance", position: "Financial Analyst", email: "aurora.henderson@techcorp.com", phone: "(555) 123-4637", hireDate: "2018-05-22", salary: "$96,000"},
+            {empId: "EMP072", name: "Owen Coleman", dept: "Engineering", position: "Angular Developer", email: "owen.coleman@techcorp.com", phone: "(555) 123-4638", hireDate: "2019-12-09", salary: "$119,000"},
+            {empId: "EMP073", name: "Isla Jenkins", dept: "Marketing", position: "SEO Specialist", email: "isla.jenkins@techcorp.com", phone: "(555) 123-4639", hireDate: "2020-11-16", salary: "$94,000"},
+            {empId: "EMP074", name: "Benjamin Perry", dept: "Engineering", position: "Next.js Developer", email: "benjamin.perry@techcorp.com", phone: "(555) 123-4640", hireDate: "2021-02-08", salary: "$118,000"},
+            {empId: "EMP075", name: "Poppy Powell", dept: "Product", position: "Analytics Manager", email: "poppy.powell@techcorp.com", phone: "(555) 123-4641", hireDate: "2018-01-29", salary: "$130,000"},
+            {empId: "EMP076", name: "Lucas Long", dept: "Engineering", position: "GraphQL Developer", email: "lucas.long@techcorp.com", phone: "(555) 123-4642", hireDate: "2020-07-27", salary: "$124,000"},
+            {empId: "EMP077", name: "Daisy Patterson", dept: "Design", position: "Motion Designer", email: "daisy.patterson@techcorp.com", phone: "(555) 123-4643", hireDate: "2021-04-05", salary: "$109,000"},
+            {empId: "EMP078", name: "Oliver Bennett", dept: "Engineering", position: "WebGL Developer", email: "oliver.bennett@techcorp.com", phone: "(555) 123-4644", hireDate: "2019-06-17", salary: "$126,000"},
+            {empId: "EMP079", name: "Sophia Chavez", dept: "Marketing", position: "Event Manager", email: "sophia.chavez@techcorp.com", phone: "(555) 123-4645", hireDate: "2019-10-21", salary: "$99,000"},
+            {empId: "EMP080", name: "Mason Stevens", dept: "Engineering", position: "Blockchain Developer", email: "mason.stevens@techcorp.com", phone: "(555) 123-4646", hireDate: "2020-03-30", salary: "$140,000"},
+            {empId: "EMP081", name: "Lily Medina", dept: "HR", position: "Compensation Specialist", email: "lily.medina@techcorp.com", phone: "(555) 123-4647", hireDate: "2018-11-05", salary: "$86,000"},
+            {empId: "EMP082", name: "Liam Tucker", dept: "Engineering", position: "Crypto Developer", email: "liam.tucker@techcorp.com", phone: "(555) 123-4648", hireDate: "2020-09-08", salary: "$139,000"},
+            {empId: "EMP083", name: "Ivy Pratt", dept: "Product", position: "Localization Manager", email: "ivy.pratt@techcorp.com", phone: "(555) 123-4649", hireDate: "2019-02-11", salary: "$108,000"},
+            {empId: "EMP084", name: "Ethan Tran", dept: "Engineering", position: "Firmware Engineer", email: "ethan.tran@techcorp.com", phone: "(555) 123-4650", hireDate: "2017-04-24", salary: "$135,000"},
+            {empId: "EMP085", name: "Aurora Gray", dept: "Design", position: "Creative Director", email: "aurora.gray@techcorp.com", phone: "(555) 123-4651", hireDate: "2016-06-13", salary: "$160,000"},
+            {empId: "EMP086", name: "Alexander Ramirez", dept: "Engineering", position: "Embedded Systems Engineer", email: "alexander.ramirez@techcorp.com", phone: "(555) 123-4652", hireDate: "2018-08-06", salary: "$136,000"},
+            {empId: "EMP087", name: "Hazel James", dept: "Marketing", position: "Demand Gen Manager", email: "hazel.james@techcorp.com", phone: "(555) 123-4653", hireDate: "2020-01-20", salary: "$116,000"},
+            {empId: "EMP088", name: "Benjamin Watson", dept: "Engineering", position: "Hardware Engineer", email: "benjamin.watson@techcorp.com", phone: "(555) 123-4654", hireDate: "2019-05-27", salary: "$134,000"},
+            {empId: "EMP089", name: "Violet Brooks", dept: "Finance", position: "Budget Analyst", email: "violet.brooks@techcorp.com", phone: "(555) 123-4655", hireDate: "2020-06-15", salary: "$91,000"},
+            {empId: "EMP090", name: "Mason Kelly", dept: "Engineering", position: "IoT Engineer", email: "mason.kelly@techcorp.com", phone: "(555) 123-4656", hireDate: "2020-04-20", salary: "$132,000"},
+            {empId: "EMP091", name: "Nora Sanders", dept: "Product", position: "Product Owner", email: "nora.sanders@techcorp.com", phone: "(555) 123-4657", hireDate: "2017-09-25", salary: "$148,000"},
+            {empId: "EMP092", name: "Lucas Bennett", dept: "Engineering", position: "Network Engineer", email: "lucas.bennett@techcorp.com", phone: "(555) 123-4658", hireDate: "2019-07-08", salary: "$131,000"},
+            {empId: "EMP093", name: "Stella Price", dept: "Design", position: "Design Mentor", email: "stella.price@techcorp.com", phone: "(555) 123-4659", hireDate: "2018-02-19", salary: "$132,000"},
+            {empId: "EMP094", name: "Jacob Berry", dept: "Engineering", position: "Security Architect", email: "jacob.berry@techcorp.com", phone: "(555) 123-4660", hireDate: "2016-12-12", salary: "$155,000"},
+            {empId: "EMP095", name: "Chloe Bishop", dept: "Marketing", position: "Communications Manager", email: "chloe.bishop@techcorp.com", phone: "(555) 123-4661", hireDate: "2018-03-26", salary: "$110,000"},
+            {empId: "EMP096", name: "Ethan Hall", dept: "Engineering", position: "Solutions Architect", email: "ethan.hall@techcorp.com", phone: "(555) 123-4662", hireDate: "2017-10-02", salary: "$152,000"},
+            {empId: "EMP097", name: "Maya Rivera", dept: "HR", position: "Talent Acquisition Lead", email: "maya.rivera@techcorp.com", phone: "(555) 123-4663", hireDate: "2017-04-10", salary: "$105,000"},
+            {empId: "EMP098", name: "Oliver Allen", dept: "Engineering", position: "VP of Engineering", email: "oliver.allen@techcorp.com", phone: "(555) 123-4664", hireDate: "2015-01-20", salary: "$250,000"},
+            {empId: "EMP099", name: "Ava Young", dept: "Design", position: "Chief Design Officer", email: "ava.young@techcorp.com", phone: "(555) 123-4665", hireDate: "2014-08-11", salary: "$240,000"},
+            {empId: "EMP100", name: "Noah Hernandez", dept: "Engineering", position: "Principal Engineer", email: "noah.hernandez@techcorp.com", phone: "(555) 123-4666", hireDate: "2016-02-15", salary: "$180,000"}
+        ];
+
+        let table1;
+
+        function initializeTable(tableId, dataArray) {
+            const tbody = $(`#${tableId} tbody`);
+            tbody.empty();
+            
+            dataArray.forEach(item => {
+                tbody.append(`
+                    <tr>
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td>${item.empId}</td>
+                        <td>${item.name}</td>
+                        <td>${item.dept}</td>
+                        <td>${item.position}</td>
+                        <td>${item.email}</td>
+                        <td>${item.phone}</td>
+                        <td>${item.hireDate}</td>
+                        <td>${item.salary}</td>
+                    </tr>
+                `);
+            });
+
+            return $(`#${tableId}`).DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                searching: true,
+                ordering: true,
+                order: [[1, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: 0, searchable: false }
+                ],
+                language: {
+                    paginate: {
+                        previous: "← Previous",
+                        next: "Next →",
+                        first: "First",
+                        last: "Last"
+                    },
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries"
+                },
+                dom: 'rt'
+            });
+        }
+
+        $(document).ready(function() {
+            table1 = initializeTable('table1', tableData);
+
+            function updatePaginationUI() {
+                const info = table1.page.info();
+                const totalPages = info.pages;
+                
+                $('#tableInfo').text(`Showing ${info.start + 1} to ${info.end} of ${info.recordsTotal} entries`);
+
+                let paginationHTML = '<button class="first-btn" id="firstBtn">First</button>';
+                paginationHTML += '<button class="prev-btn" id="prevBtn">← Previous</button>';
+
+                let startPage = Math.max(0, info.page - 2);
+                let endPage = Math.min(totalPages, info.page + 3);
+
+                if (startPage > 0) {
+                    paginationHTML += '<button class="page-btn" data-page="0">1</button>';
+                    if (startPage > 1) paginationHTML += '<span>...</span>';
+                }
+
+                for (let i = startPage; i < endPage; i++) {
+                    const isActive = i === info.page ? 'active' : '';
+                    paginationHTML += `<button class="page-btn ${isActive}" data-page="${i}">${i + 1}</button>`;
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) paginationHTML += '<span>...</span>';
+                    paginationHTML += `<button class="page-btn" data-page="${totalPages - 1}">${totalPages}</button>`;
+                }
+
+                paginationHTML += '<button class="next-btn" id="nextBtn">Next →</button>';
+                paginationHTML += '<button class="last-btn" id="lastBtn">Last</button>';
+
+                $('#paginationButtons').html(paginationHTML);
+
+                $('.page-btn').on('click', function() {
+                    const page = $(this).data('page');
+                    table1.page(page).draw('page');
+                });
+
+                $('#firstBtn').on('click', function() {
+                    table1.page(0).draw('page');
+                });
+
+                $('#prevBtn').on('click', function() {
+                    table1.page('previous').draw('page');
+                });
+
+                $('#nextBtn').on('click', function() {
+                    table1.page('next').draw('page');
+                });
+
+                $('#lastBtn').on('click', function() {
+                    table1.page(totalPages - 1).draw('page');
+                });
+            }
+
+            updatePaginationUI();
+
+            $('#pageLength').on('change', function() {
+                const length = $(this).val();
+                table1.page.len(length).draw();
+            });
+
+            table1.on('draw.dt', function() {
+                updatePaginationUI();
+            });
+
+            $('#globalSearch').on('keyup', function() {
+                const searchValue = $(this).val();
+                table1.search(searchValue).draw();
+            });
+
+            $('#dropdownBtn1').on('click', function(e) {
+                e.stopPropagation();
+                $('#dropdownContent1').toggleClass('show');
+            });
+
+            $('#dropdownContent1').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown-container').length) {
+                    $('#dropdownContent1').removeClass('show');
+                }
+            });
+
+            $('#dropdownContent1 input.toggle-vis').on('change', function() {
+                const columnIndex = parseInt($(this).data('column'));
+                const column = table1.column(columnIndex);
+                column.visible(!column.visible());
+            });
+
+            $('#table1 tbody').on('click', 'input.row-checkbox', function(e) {
+                $(this).closest('tr').toggleClass('selected');
+                updateSelectAllCheckbox('table1', 'selectAll1');
+            });
+
+            $('#selectAll1').on('change', function() {
+                const isChecked = $(this).prop('checked');
+                $('#table1 tbody tr').toggleClass('selected', isChecked);
+                $('#table1 tbody input.row-checkbox').prop('checked', isChecked);
+            });
+
+            $('#deleteBtn1').on('click', function() {
+                deleteSelectedRows('table1', 'message1', table1, 'selectAll1');
+            });
+
+            function updateSelectAllCheckbox(tableId, selectAllId) {
+                const totalRows = $(`#${tableId} tbody tr`).length;
+                const selectedRows = $(`#${tableId} tbody tr.selected`).length;
+                $(`#${selectAllId}`).prop('checked', totalRows > 0 && totalRows === selectedRows);
+            }
+
+            function deleteSelectedRows(tableId, messageId, dataTable, selectAllId) {
+                const selectedRows = $(`#${tableId} tbody tr.selected`);
+                const count = selectedRows.length;
+
+                if (count === 0) {
+                    showMessage(messageId, 'error', 'Please select at least one row to delete');
+                    return;
+                }
+
+                if (confirm(`Are you sure you want to delete ${count} row(s)?`)) {
+                    dataTable.rows('.selected').remove().draw();
+                    $(`#${selectAllId}`).prop('checked', false);
+                    showMessage(messageId, 'success', `Successfully deleted ${count} row(s)`);
+                }
+            }
+
+            function showMessage(elementId, type, message) {
+                const $message = $(`#${elementId}`);
+                $message.removeClass('success error').addClass(type).text(message);
+                setTimeout(() => {
+                    $message.removeClass('success error').text('');
+                }, 4000);
+            }
+        });
+    </script>
+</body>
+</html>
